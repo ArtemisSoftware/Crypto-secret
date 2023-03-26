@@ -1,5 +1,6 @@
 package com.artemissoftware.cryptosecret
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +10,19 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.datastore.dataStore
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.artemissoftware.cryptosecret.ui.CryptoManager
 import com.artemissoftware.cryptosecret.ui.theme.CryptoSecretTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val Context.dataStore by dataStore(
+        fileName = "user-settings.json",
+        serializer = UserSettingsSerializer(CryptoManager()),
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,7 +32,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    Greeting("Android")
+                    val context = LocalContext.current
+                    CryptoScreen(context.dataStore)
                 }
             }
         }
